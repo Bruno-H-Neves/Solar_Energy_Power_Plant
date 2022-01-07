@@ -4,7 +4,7 @@ import pickle
 import os
 import PySimpleGUI as sg
 
-width,height=107,10
+width,height=107,15
 
 try:
     with open('Solar_Plant','rb') as f:
@@ -38,7 +38,5 @@ while True:
 folder = sg.popup_get_folder('File Name','File Search')   #4
 os.chdir(folder)
 cv2.imwrite("Solar_Plant.jpg", img)
-#cv2.imwrite("Detect_Subtract.png", ImgSub)
-#cap.release()
 print(posList)
 cv2.destroyAllWindows()
