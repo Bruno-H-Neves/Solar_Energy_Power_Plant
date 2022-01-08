@@ -4,8 +4,6 @@ import datetime
 import pytz
 import psutil
 
-
-
 def script():
     sg.theme('DarkGrey7')
     menu_def = [['&File', ['E&xit',]],
@@ -24,6 +22,13 @@ def script():
         elif values['-auto-']== True:
             auto=1 
     return auto
+
+def sourceKey(posList,source_key,img,colorR,colorB,width,height):
+    for idx,pos in enumerate(posList):
+        cv2.rectangle(img,pos,(pos[0]+width,pos[1]+height),colorR,cv2.FILLED)
+        cv2.line(img,(pos[0],pos[1]+int(height/2)),(pos[0]-50,pos[1]+int(height/2)),colorR,2)
+        cv2.putText(img,source_key[idx],(pos[0]+5,pos[1]+height-5),cv2.FONT_HERSHEY_SIMPLEX,0.3,colorB,1)
+    return img
 
 class InverterAcDc():
     def __init__(self,img,fpoint,colorInv=(50,0,200)):

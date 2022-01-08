@@ -3,12 +3,18 @@ import numpy as np
 import pickle
 import os
 import PySimpleGUI as sg
-from Function_BN  import script,InverterAcDc,Transformer,Header
+from Function_BN  import script,InverterAcDc,Transformer,Header,sourceKey
+from SolarPlant import SolarPV
+solar=SolarPV()
+
+p1_source_key,p2_source_key=solar.main()
 
 he=Header()
 width,height=107,15
 nb=900
-colorR=(50,0,200)
+colorR=(100,255,100)
+colorB=(100,0,50)
+
 try:
     with open('Solar_Plant','rb') as f:
         posList=pickle.load(f)
@@ -29,21 +35,21 @@ def mouseClick(events,x,y,flags,params):
 auto= script()
 
 if auto==1:
-    posList=[]  
+    posList1=[]
+    posList2=[]  
     y=50
     for i in range(22):
         if i!=0:
             y=y+height+10
-        posList.append((100,y))
-        posList.append((600,y))
+        posList1.append((100,y))
+        posList2.append((600,y))
     img=cv2.imread("workspace.jpg")
     scale=img.shape[0]/img.shape[1]
     img = cv2.resize(img,(nb,int(nb*scale)))
+    
     he.leftH(image=img)
-
-    for pos in posList:
-        cv2.rectangle(img,pos,(pos[0]+width,pos[1]+height),colorR,2)
-        cv2.line(img,(pos[0],pos[1]+int(height/2)),(pos[0]-50,pos[1]+int(height/2)),colorR,2)
+    img=sourceKey(posList1,p1_source_key,img,colorR,colorB,width,height)
+    img=sourceKey(posList2,p2_source_key,img,colorR,colorB,width,height)
     Inverter=InverterAcDc(img=img,colorInv=colorR,fpoint=(275,100))
     text1="PLANT 1"
     Inverter.draw(text1)
@@ -71,9 +77,6 @@ if auto==1:
     transf.draw(img=img,point=(375,320),radius=rad,color=colorR)
     cv2.line(img,(375,int(320+(3.4*rad))),(375,int(320+(3.4*rad)+100)),colorR,2)
 
-
-
-
     Inverter.draw(text2)
     cv2.imshow("Image",img)
     while True:
@@ -94,8 +97,11 @@ else:
         if key == 27 or key==ord('q'): 
             break
 print(posList)
+print(p1_source_key)
+print(p2_source_key)
+
 folder = sg.popup_get_folder('File Name','File Search')   
 os.chdir(folder)
 cv2.imwrite("Solar_Plant.jpg", img)
-print(posList)
+
 cv2.destroyAllWindows()
